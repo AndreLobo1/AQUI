@@ -57,9 +57,9 @@ jobs:
           echo "🚀 Iniciando sincronização..."
           if [ "${{ inputs.force_sync }}" = "true" ]; then
             echo "🔄 Forçando sincronização completa..."
-            docker-compose build --no-cache
+            docker compose build --no-cache
           fi
-          docker-compose run --rm carteira
+          docker compose run --rm carteira
           echo "✅ Sincronização concluída"
           
       - name: Limpar arquivos sensíveis
