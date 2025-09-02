@@ -49,6 +49,9 @@ RUN apt-get update && apt-get install -y \
 # Define diretório de trabalho
 WORKDIR /app
 
+# Cria diretórios necessários
+RUN mkdir -p /app/data /app/exports
+
 # Copia apenas os artefatos necessários do estágio builder
 COPY --from=builder /app/atualizador/node_modules ./atualizador/node_modules
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages

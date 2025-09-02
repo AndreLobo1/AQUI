@@ -3,6 +3,7 @@ services:
     build: .
     volumes:
       - ./:/app
+      - ./data:/app/data
       - node_modules_cache:/app/atualizador/node_modules
     working_dir: /app
     stdin_open: true
