@@ -1,6 +1,7 @@
 import sqlite3
 import gspread
 import os
+import sys
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread_formatting import *
 from dotenv import load_dotenv
@@ -362,7 +363,8 @@ def main():
                 print(f"   Primeiras 100 caracteres: {content[:100]}")
         except Exception as read_error:
             print(f"   Erro ao ler arquivo: {str(read_error)}")
-        return
+        print("💥 Falha crítica: Encerrando execução")
+        sys.exit(1)
     
     print(f"✅ Conectado ao Google Sheets: {SPREADSHEET_NAME}")
     

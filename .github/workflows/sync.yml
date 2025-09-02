@@ -38,8 +38,8 @@ jobs:
           
       - name: Criar arquivo de credenciais JSON
         run: |
-          echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > ${{ steps.extract_json_name.outputs.json_file }}
-          echo "✅ Arquivo de credenciais criado: ${{ steps.extract_json_name.outputs.json_file }}"
+          echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" | base64 --decode > ${{ steps.extract_json_name.outputs.json_file }}
+          echo "✅ Arquivo de credenciais decodificado e criado: ${{ steps.extract_json_name.outputs.json_file }}"
           
       - name: Verificar arquivos criados
         run: |
