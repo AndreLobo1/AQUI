@@ -1,0 +1,14 @@
+services:
+  carteira:
+    build: .
+    volumes:
+      - ./:/app
+      - node_modules_cache:/app/atualizador/node_modules
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+
+volumes:
+  node_modules_cache:

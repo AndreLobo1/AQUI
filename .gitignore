@@ -1,0 +1,54 @@
+# Arquivos de ambiente virtual Python
+venv/
+.venv/
+env/
+.env
+
+# Cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Arquivos de credenciais
+*.json
+!package.json
+!package-lock.json
+
+# Dados baixados pelo script
+atualizador/data/
+
+# Dependências do Node.js
+atualizador/node_modules/
+
+# Arquivos de variáveis de ambiente
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Arquivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de backup
+*.bak
+*.backup
+
+
+
+# Arquivos de script legados
+*.bat
