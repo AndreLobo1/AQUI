@@ -1,0 +1,93 @@
+name: Sincronização Financeira Automática
+
+on:
+  # Execução agendada diária às 8h UTC
+  schedule:
+    - cron: '0 8 * * *'
+  
+  # Execução manual
+  workflow_dispatch:
+    inputs:
+      force_sync:
+        description: 'Forçar sincronização completa'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  sync-financial-data:
+    name: Sincronizar Dados Financeiros
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Configurar Docker Compose
+        run: |
+          # Instalar Docker Compose
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
+          
+      - name: Criar arquivo .env
+        run: |
+          echo "${{ secrets.DOT_ENV_FILE }}" > .env
+          echo "✅ Arquivo .env criado"
+          
+      - name: Extrair nome do arquivo JSON do .env
+        id: extract_json_name
+        run: |
+          # Extrair GOOGLE_CREDENTIALS_FILE do .env
+          JSON_FILE=$(grep '^GOOGLE_CREDENTIALS_FILE=' .env | cut -d'=' -f2)
+          echo "json_file=$JSON_FILE" >> $GITHUB_OUTPUT
+          echo "📄 Nome do arquivo JSON: $JSON_FILE"
+          
+      - name: Criar arquivo de credenciais JSON
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > ${{ steps.extract_json_name.outputs.json_file }}
+          echo "✅ Arquivo de credenciais criado: ${{ steps.extract_json_name.outputs.json_file }}"
+          
+      - name: Verificar arquivos criados
+        run: |
+          echo "📁 Conteúdo da pasta:"
+          ls -la
+          echo ""
+          echo "📄 Conteúdo do .env (sem credenciais):"
+          cat .env | grep -v PASSWORD
+          echo ""
+          echo "🔑 Arquivo JSON existe:"
+          ls -la ${{ steps.extract_json_name.outputs.json_file }}
+          
+      - name: Build da imagem Docker
+        run: |
+          docker-compose build --no-cache
+          echo "✅ Build concluído"
+          
+      - name: Executar sincronização
+        run: |
+          echo "🚀 Iniciando sincronização..."
+          docker-compose run --rm carteira
+          echo "✅ Sincronização concluída"
+          
+      - name: Limpar arquivos sensíveis
+        if: always()
+        run: |
+          echo "🧹 Limpando arquivos sensíveis..."
+          rm -f .env
+          rm -f ${{ steps.extract_json_name.outputs.json_file }}
+          echo "✅ Limpeza concluída"
+          
+      - name: Notificar sucesso
+        if: success()
+        run: |
+          echo "🎉 Sincronização executada com sucesso!"
+          echo "📊 Dados atualizados no Google Sheets"
+          
+      - name: Notificar falha
+        if: failure()
+        run: |
+          echo "❌ Sincronização falhou!"
+          echo "🔍 Verifique os logs acima para mais detalhes"
