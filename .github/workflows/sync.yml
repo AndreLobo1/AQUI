@@ -23,15 +23,6 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
         
-      - name: Configurar Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: Configurar Docker Compose
-        run: |
-          # Instalar Docker Compose
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-          
       - name: Criar arquivo .env
         run: |
           echo "${{ secrets.DOT_ENV_FILE }}" > .env
@@ -61,14 +52,13 @@ jobs:
           echo "🔑 Arquivo JSON existe:"
           ls -la ${{ steps.extract_json_name.outputs.json_file }}
           
-      - name: Build da imagem Docker
-        run: |
-          docker-compose build --no-cache
-          echo "✅ Build concluído"
-          
       - name: Executar sincronização
         run: |
           echo "🚀 Iniciando sincronização..."
+          if [ "${{ inputs.force_sync }}" = "true" ]; then
+            echo "🔄 Forçando sincronização completa..."
+            docker-compose build --no-cache
+          fi
           docker-compose run --rm carteira
           echo "✅ Sincronização concluída"
           
