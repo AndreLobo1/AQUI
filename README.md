@@ -166,7 +166,7 @@ docker-compose run --rm carteira
 ```bash
 docker-compose up -d carteira
 ```
-> Para executar em background e ver logs com `docker-compose logs -f carteira`
+> Para executar em background (modo detached) e ver logs com `docker-compose logs -f carteira`
 
 ## 🤖 Automação com GitHub Actions (Faça o script rodar sozinho)
 
@@ -223,6 +223,44 @@ schedule:
 - ✅ Sucesso: "Sincronização executada com sucesso!"
 - ❌ Falha: "Sincronização falhou!" com logs detalhados
 
+## 📊 Criando o Dashboard Interativo (Google Apps Script)
+
+O arquivo `dashboard.gs` no repositório contém um script para criar um painel dinâmico na planilha, permitindo análises avançadas e visualizações interativas dos seus dados financeiros.
+
+### Instalando o Script do Dashboard
+
+**Passo a Passo:**
+
+1. **Abra sua Planilha Google Sheets**
+   - Acesse a planilha onde os dados estão sendo sincronizados
+
+2. **Acesse o Apps Script**
+   - No menu superior, clique em **Extensões** > **Apps Script**
+
+3. **Limpe o Editor**
+   - Apague todo o código de exemplo que estiver no editor
+
+4. **Cole o Script**
+   - Abra o arquivo `dashboard.gs` do nosso repositório
+   - Copie **todo o conteúdo** do arquivo
+   - Cole no editor do Apps Script
+
+5. **Salve o Projeto**
+   - Clique em **Salvar** (ou Ctrl+S)
+   - Dê um nome ao projeto (ex: "Dashboard Financeiro")
+
+6. **Recarregue a Planilha**
+   - Volte para a planilha e recarregue a página
+   - Um novo menu **📊 Dashboard** aparecerá na barra superior
+
+### Funcionalidades do Dashboard
+
+Após a instalação, você terá acesso a:
+- **Gráficos dinâmicos** baseados nos dados das transações
+- **Filtros avançados** por período, categoria e conta
+- **Análises de tendências** e gastos por mês
+- **Relatórios personalizados** com exportação
+
 ## 📂 Estrutura do Projeto
 
 ```
@@ -233,6 +271,7 @@ AQUI/
 ├── 🚀 entrypoint.sh              # Script de inicialização do container
 ├── 📋 requirements.txt           # Dependências Python
 ├── 🔧 .env.example               # Template de variáveis de ambiente
+├── 📄 dashboard.gs               # Script Google Apps Script para dashboard
 ├── 📁 atualizador/               # Módulo de download do Actual Budget
 │   ├── 📄 download-budget.js     # Script Node.js para baixar dados
 │   ├── 📄 package.json           # Dependências Node.js
@@ -250,6 +289,7 @@ AQUI/
 - **`entrypoint.sh`**: Orquestra a execução: primeiro baixa dados, depois processa
 - **`atualizador/download-budget.js`**: Conecta ao Actual Budget e baixa os dados
 - **`.github/workflows/sync.yml`**: Automação diária com GitHub Actions
+- **`dashboard.gs`**: Script Google Apps Script para criar dashboard interativo
 
 ## 🔧 Troubleshooting
 
@@ -278,16 +318,4 @@ AQUI/
 - Regenere o arquivo JSON no Google Cloud Console
 - Use codificação Base64 para evitar problemas de formatação
 
-## 📈 Próximos Passos
 
-Após a primeira execução bem-sucedida, você pode:
-
-- **Automatizar execuções**: Configure GitHub Actions (já incluído)
-- **Personalizar formatação**: Modifique cores e estilos no `run_export.py`
-- **Adicionar filtros**: Implemente filtros personalizados para transações
-- **Dashboard**: Crie gráficos e análises na planilha
-- **Monitoramento**: Configure alertas para falhas na sincronização
-
----
-
-**🎯 Resultado Final:** Suas transações financeiras serão automaticamente sincronizadas do Actual Budget para o Google Sheets todos os dias, com formatação profissional e cores condicionais, sem intervenção manual!
