@@ -13,6 +13,7 @@ Este projeto automatiza a extração de dados financeiros do **Actual Budget** (
 - **💰 Cálculo de Saldos**: Calcula e exibe saldos atuais de todas as contas
 - **🔒 Segurança**: Usa variáveis de ambiente para proteger credenciais
 - **🐳 Containerização**: Executa em ambiente Docker isolado e portável
+- **🤖 Automação**: GitHub Actions para execução diária automática
 
 ## ⚙️ Arquitetura e Fluxo de Dados
 
@@ -37,11 +38,19 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 
 ## 🚀 Guia de Instalação e Configuração
 
+### Passo 0: Configurando a Fonte de Dados (Actual Budget + Pluggy)
+
+**Pré-requisito principal:** Você precisa ter o Actual Budget funcionando e recebendo dados via Pluggy.
+
+Para configurar sua instância do Actual Budget no Fly.io e conectá-la aos seus bancos com o Pluggy, siga o excelente guia em vídeo disponível em: **https://youtu.be/PjJ0F8GIHTs**
+
+Após concluir os passos do vídeo e ter seu Actual recebendo as transações, retorne a este guia.
+
 ### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/carteira-automatizada.git
-cd carteira-automatizada
+git clone https://github.com/AndreLobo1/AQUI.git
+cd AQUI
 ```
 
 ### 2. Configure o Actual Budget
@@ -111,25 +120,30 @@ cp .env.example .env
 Abra o arquivo `.env` e preencha com suas informações:
 
 ```env
-# Variáveis de Ambiente para o Projeto Carteira
+# ========================================
+# CONFIGURAÇÕES DO ACTUAL BUDGET
+# ========================================
+ACTUAL_SERVER_URL=https://seu-actual.exemplo.com
+ACTUAL_SYNC_ID=seu-sync-id-aqui
+ACTUAL_PASSWORD=sua-senha-aqui
 
-# Nome do seu arquivo de credenciais do Google (sem .json)
+# ========================================
+# CONFIGURAÇÕES DO GOOGLE SHEETS
+# ========================================
+SPREADSHEET_NAME=Minha Carteira
 GOOGLE_CREDENTIALS_FILE=minhas-credenciais.json
 
-# Caminho para o banco de dados SQLite (geralmente não precisa mudar)
+# ========================================
+# CONFIGURAÇÕES DO BANCO DE DADOS
+# ========================================
 SQLITE_DB_PATH=atualizador/data/My-Finances-2873fb3/db.sqlite
+DATABASE_URL=sqlite:///app/data/budget.sqlite
 
-# Nome exato da sua Planilha no Google Sheets
-SPREADSHEET_NAME=Minha Carteira
-
-# URL do seu servidor Actual Budget
-ACTUAL_SERVER_URL=https://meu-actual.exemplo.com
-
-# Sync ID do seu orçamento (encontre nas configurações do Actual)
-ACTUAL_SYNC_ID=seu-sync-id-aqui
-
-# Senha do seu orçamento (se tiver)
-ACTUAL_PASSWORD=sua-senha-aqui
+# ========================================
+# CONFIGURAÇÕES DE EXPORTAÇÃO
+# ========================================
+EXPORT_FORMAT=json
+EXPORT_PATH=/app/exports
 ```
 
 > 🔒 **Segurança**: O arquivo `.env` não será commitado no Git, mantendo suas credenciais seguras.
@@ -154,10 +168,65 @@ docker-compose up -d carteira
 ```
 > Para executar em background e ver logs com `docker-compose logs -f carteira`
 
+## 🤖 Automação com GitHub Actions (Faça o script rodar sozinho)
+
+Esta é a maneira **recomendada** de automatizar o projeto para que ele rode diariamente na nuvem, **de graça**.
+
+### Passo A: Configurando os Segredos no GitHub
+
+As credenciais devem ser salvas nos "Secrets" do repositório:
+
+1. **Vá em:** Settings > Secrets and variables > Actions
+2. **Clique:** "New repository secret"
+3. **Crie os dois segredos:**
+
+**Secret `DOT_ENV_FILE`:**
+- **Nome:** `DOT_ENV_FILE`
+- **Valor:** Conteúdo completo do seu arquivo `.env`
+
+**Secret `GOOGLE_CREDENTIALS_JSON`:**
+- **Nome:** `GOOGLE_CREDENTIALS_JSON`
+- **Valor:** String Base64 do seu arquivo JSON (veja Passo B)
+
+### Passo B: A Importância de Codificar suas Credenciais (Base64)
+
+**Por que isso é necessário:** Para evitar erros de formatação ao copiar e colar o conteúdo do arquivo `.json` (um problema que enfrentamos e resolvemos).
+
+**Como fazer:**
+1. **Vá para:** https://www.base64encode.org/
+2. **Faça upload** do seu arquivo `.json` de credenciais
+3. **Copie** a string Base64 de linha única resultante
+4. **Cole** no valor do segredo `GOOGLE_CREDENTIALS_JSON`
+
+### Passo C: Personalizando o Horário da Execução
+
+O agendamento está definido no arquivo `.github/workflows/sync.yml`:
+
+```yaml
+schedule:
+  - cron: '0 8 * * *'  # 8h da manhã no horário UTC
+```
+
+**O que significa:**
+- `0 8 * * *` = Todos os dias às 8h UTC (5h da manhã no horário de Brasília)
+- Para personalizar, use: https://crontab.guru/
+
+### Passo D: Ativando e Monitorando
+
+**Após enviar o arquivo `.yml` para o repositório:**
+- ✅ A automação já estará ativa
+- ✅ Execução diária automática às 8h UTC
+- ✅ Execução manual disponível na aba "Actions"
+
+**Notificações:**
+- 📧 O GitHub envia e-mail automático ao dono do repositório
+- ✅ Sucesso: "Sincronização executada com sucesso!"
+- ❌ Falha: "Sincronização falhou!" com logs detalhados
+
 ## 📂 Estrutura do Projeto
 
 ```
-carteira-automatizada/
+AQUI/
 ├── 📄 run_export.py              # Script principal Python (unificado)
 ├── 🐳 Dockerfile                 # Configuração do container otimizado
 ├── 🐳 docker-compose.yml         # Orquestração dos serviços
@@ -168,6 +237,8 @@ carteira-automatizada/
 │   ├── 📄 download-budget.js     # Script Node.js para baixar dados
 │   ├── 📄 package.json           # Dependências Node.js
 │   └── 📁 data/                  # Dados baixados (SQLite)
+├── 📁 .github/workflows/         # Automação GitHub Actions
+│   └── 📄 sync.yml               # Workflow de sincronização automática
 └── 📄 README.md                  # Este arquivo
 ```
 
@@ -178,6 +249,7 @@ carteira-automatizada/
 - **`docker-compose.yml`**: Define o serviço e carrega variáveis de ambiente
 - **`entrypoint.sh`**: Orquestra a execução: primeiro baixa dados, depois processa
 - **`atualizador/download-budget.js`**: Conecta ao Actual Budget e baixa os dados
+- **`.github/workflows/sync.yml`**: Automação diária com GitHub Actions
 
 ## 🔧 Troubleshooting
 
@@ -197,11 +269,25 @@ carteira-automatizada/
 - Confirme o Sync ID nas configurações do Actual Budget
 - Verifique se a URL do servidor está correta
 
+### Erro: "docker-compose: command not found"
+- Use `docker compose` (com espaço) em vez de `docker-compose` (com hífen)
+- Os runners modernos do GitHub Actions usam a sintaxe nova
+
+### Erro: "Invalid JWT Signature"
+- Verifique se as credenciais não expiraram
+- Regenere o arquivo JSON no Google Cloud Console
+- Use codificação Base64 para evitar problemas de formatação
+
 ## 📈 Próximos Passos
 
 Após a primeira execução bem-sucedida, você pode:
 
-- **Automatizar execuções**: Configure um cron job ou GitHub Actions
+- **Automatizar execuções**: Configure GitHub Actions (já incluído)
 - **Personalizar formatação**: Modifique cores e estilos no `run_export.py`
 - **Adicionar filtros**: Implemente filtros personalizados para transações
 - **Dashboard**: Crie gráficos e análises na planilha
+- **Monitoramento**: Configure alertas para falhas na sincronização
+
+---
+
+**🎯 Resultado Final:** Suas transações financeiras serão automaticamente sincronizadas do Actual Budget para o Google Sheets todos os dias, com formatação profissional e cores condicionais, sem intervenção manual!
