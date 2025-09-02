@@ -3,6 +3,13 @@ set -e
 
 echo "[+] Iniciando atualização do orçamento..."
 
+# Criar diretórios necessários
+mkdir -p /app/data
+mkdir -p /app/exports
+mkdir -p /app/atualizador/data
+
+echo "[+] Diretórios criados com sucesso"
+
 # 1. Baixar dados via Node.js
 cd /app/atualizador
 node download-budget.js

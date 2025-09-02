@@ -1,4 +1,6 @@
 const api = require('@actual-app/api');
+const fs = require('fs');
+const path = require('path');
 
 async function main() {
   // Configurações
@@ -6,6 +8,12 @@ async function main() {
   const syncId = process.env.ACTUAL_SYNC_ID || '4f676946-1eb8-4174-8499-a23502230680'; // Este é o ID correto pra download
   const password = process.env.ACTUAL_PASSWORD || 'El!z@be7h1272@'; // Sua senha do app web
   const dataDir = './data';
+
+  // Garantir que o diretório data existe
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+    console.log(`📁 Diretório ${dataDir} criado`);
+  }
 
   // Inicializa conexão
   await api.init({
