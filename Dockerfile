@@ -59,5 +59,8 @@ COPY --from=builder /app/atualizador/ ./atualizador/
 COPY --from=builder /app/run_export.py ./
 COPY --from=builder /app/entrypoint.sh ./
 
+# Copia arquivo de credenciais (se existir)
+COPY *.json ./
+
 # Define entrypoint do container
 ENTRYPOINT ["/app/entrypoint.sh"]

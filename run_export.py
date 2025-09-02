@@ -329,10 +329,40 @@ def main():
     """Função principal que orquestra todo o processo de exportação"""
     print("🚀 Iniciando processo de exportação...")
     
+    # Verificar se o arquivo de credenciais existe
+    if not os.path.exists(CREDENTIALS_FILE):
+        print(f"❌ Arquivo de credenciais não encontrado: {CREDENTIALS_FILE}")
+        print("📁 Verificando arquivos na pasta atual:")
+        for file in os.listdir('.'):
+            if file.endswith('.json'):
+                print(f"   - {file}")
+        return
+    
+    # Verificar se o arquivo SQLite existe
+    if not os.path.exists(SQLITE_DB):
+        print(f"❌ Banco SQLite não encontrado: {SQLITE_DB}")
+        print("📁 Verificando arquivos na pasta atualizador/data:")
+        if os.path.exists('atualizador/data'):
+            for root, dirs, files in os.walk('atualizador/data'):
+                for file in files:
+                    print(f"   - {os.path.join(root, file)}")
+        return
+    
     # Autenticação no Google Sheets (executada apenas uma vez)
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, scope)
-    gc = gspread.authorize(credentials)
+    try:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, scope)
+        gc = gspread.authorize(credentials)
+    except Exception as e:
+        print(f"❌ Erro ao carregar credenciais: {str(e)}")
+        print(f"📄 Verificando conteúdo do arquivo {CREDENTIALS_FILE}:")
+        try:
+            with open(CREDENTIALS_FILE, 'r') as f:
+                content = f.read()
+                print(f"   Primeiras 100 caracteres: {content[:100]}")
+        except Exception as read_error:
+            print(f"   Erro ao ler arquivo: {str(read_error)}")
+        return
     
     print(f"✅ Conectado ao Google Sheets: {SPREADSHEET_NAME}")
     

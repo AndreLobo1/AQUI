@@ -4,6 +4,7 @@ services:
     volumes:
       - ./:/app
       - ./data:/app/data
+      - ./carteira-463704-17648b3647e8.json:/app/carteira-463704-17648b3647e8.json
       - node_modules_cache:/app/atualizador/node_modules
     working_dir: /app
     stdin_open: true
