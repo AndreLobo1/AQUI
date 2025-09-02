@@ -1,13 +1,14 @@
 # ========================================
 # ESTÁGIO 1: BUILDER - Ferramentas de Build
 # ========================================
-FROM node:20-bullseye-slim AS builder
+FROM python:3.11-slim-bullseye AS builder
 
 # Instala dependências do sistema necessárias para build
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
+    curl \
     sqlite3 \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Define diretório de trabalho
@@ -56,4 +57,4 @@ COPY --from=builder /app/run_export.py ./
 COPY --from=builder /app/entrypoint.sh ./
 
 # Define entrypoint do container
-ENTRYPOINT ["/app/entrypoint.sh"].
+ENTRYPOINT ["/app/entrypoint.sh"]
