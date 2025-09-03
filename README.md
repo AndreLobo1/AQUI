@@ -229,37 +229,70 @@ O arquivo `dashboard.gs` no repositório contém um script para criar um painel 
 
 ### Instalando o Script do Dashboard
 
-**Passo a Passo:**
+**Passo a Passo Detalhado:**
 
 1. **Abra sua Planilha Google Sheets**
    - Acesse a planilha onde os dados estão sendo sincronizados
+   - Certifique-se de que as abas "Transações", "Excluídas" e "Saldos" existem
 
 2. **Acesse o Apps Script**
-   - No menu superior, clique em **Extensões** > **Apps Script**
+   - No menu superior da planilha, clique em **Extensões**
+   - Selecione **Apps Script**
+   - Uma nova aba do navegador abrirá com o editor de código
 
 3. **Limpe o Editor**
-   - Apague todo o código de exemplo que estiver no editor
+   - No editor do Apps Script, você verá um código de exemplo
+   - Selecione **todo o conteúdo** (Ctrl+A) e apague (Delete)
 
 4. **Cole o Script**
    - Abra o arquivo `dashboard.gs` do nosso repositório
-   - Copie **todo o conteúdo** do arquivo
-   - Cole no editor do Apps Script
+   - Selecione **todo o conteúdo** (Ctrl+A) e copie (Ctrl+C)
+   - Volte ao editor do Apps Script e cole (Ctrl+V)
 
 5. **Salve o Projeto**
-   - Clique em **Salvar** (ou Ctrl+S)
+   - Clique no botão **Salvar** (ícone de disquete) ou pressione Ctrl+S
    - Dê um nome ao projeto (ex: "Dashboard Financeiro")
+   - Clique em **OK**
 
-6. **Recarregue a Planilha**
-   - Volte para a planilha e recarregue a página
+6. **Autorize o Script**
+   - Na primeira execução, o Google pedirá autorizações
+   - Clique em **Revisar permissões**
+   - Selecione sua conta Google
+   - Clique em **Avançado** > **Ir para [Nome do Projeto] (não seguro)**
+   - Clique em **Permitir**
+
+7. **Recarregue a Planilha**
+   - Volte para a aba da planilha
+   - Recarregue a página (F5 ou Ctrl+R)
    - Um novo menu **📊 Dashboard** aparecerá na barra superior
+
+8. **Teste o Dashboard**
+   - Clique no menu **📊 Dashboard**
+   - Selecione **Atualizar Tela**
+   - Uma nova aba **Home** será criada automaticamente
 
 ### Funcionalidades do Dashboard
 
 Após a instalação, você terá acesso a:
-- **Gráficos dinâmicos** baseados nos dados das transações
-- **Filtros avançados** por período, categoria e conta
-- **Análises de tendências** e gastos por mês
-- **Relatórios personalizados** com exportação
+
+**📊 Aba Home Automática:**
+- **Filtros por mês/ano** com dropdowns automáticos
+- **Resumo financeiro** com entradas, saídas e balanço
+- **Listas de transações** separadas por entrada e saída
+- **Gráficos de rosca** por categoria (entradas e saídas)
+- **Gráfico de barras** do cash flow mensal
+
+**🎯 Recursos Interativos:**
+- **Atualização automática** ao mudar mês/ano
+- **Menu personalizado** "📊 Dashboard" na barra superior
+- **Formatação condicional** com cores (verde/vermelho)
+- **Layout responsivo** com bordas e formatação profissional
+
+**📈 Análises Disponíveis:**
+- **Distribuição por categoria** em gráficos de rosca
+- **Comparativo entrada vs saída** em gráfico de barras
+- **Filtros dinâmicos** baseados nos dados reais
+- **Cálculos automáticos** de totais e balanços
 
 ## 📂 Estrutura do Projeto
 
