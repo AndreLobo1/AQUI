@@ -29,31 +29,76 @@ Pré-requisito: ter o Actual Budget recebendo transações via Pluggy antes de s
 * Guia rápido (vídeo): [https://youtu.be/PjJ0F8GIHTs](https://youtu.be/PjJ0F8GIHTs)
 * Regras de categorização automática (leia isso): [https://actualbudget.org/docs/budgeting/rules/](https://actualbudget.org/docs/budgeting/rules/)
 
-### 1. Deploy do Actual Budget no Fly.io
+### 1 Deploy no Fly.io
 
-* Instale a CLI do Fly:
+O Fly.io é a plataforma de hospedagem onde rodaremos o Actual Budget.  
+➡️ **Importante:** É necessário criar uma conta e informar um cartão de crédito.  
 
-  ```bash
-  curl -L https://fly.io/install.sh | sh
-  ```
-* Login:
+Nossa sugestão é usar um **cartão virtual temporário** — assim você evita cobranças indesejadas, mesmo que por algum motivo estoure o limite gratuito (o que é muito improvável rodando apenas o Actual).
 
-  ```bash
-  fly auth login
-  ```
-* Crie o app (dê `N` para Postgres/Redis se não quiser):
+#### 1.1 Criar conta no Fly.io
+- Acesse [fly.io](https://fly.io) e crie sua conta.
+- Cadastre um cartão (pode ser virtual/temporário).  
+- Dentro do limite gratuito (até ~5 USD/mês) você não terá cobrança real.
 
-  ```bash
-  fly launch --name meu-actual-budget
-  ```
-* Ajuste `fly.toml` se necessário e rode:
+#### 1.2. Instalar o Fly CLI
 
-  ```bash
-  fly deploy
-  ```
-* Acesse `https://meu-actual-budget.fly.dev`, configure a conta e copie o **Sync ID** em Configurações > Configurações Avançadas.
+**macOS / Linux:**
+```bash
+curl -L https://fly.io/install.sh | sh
+````
 
-Observação: se você vai apenas testar ou desenvolver localmente, o deploy no Fly é opcional (veja seção opcional abaixo).
+**Windows (PowerShell):**
+
+```powershell
+iwr https://fly.io/install.ps1 -useb | iex
+```
+
+#### 1.3. Login
+
+```bash
+fly auth login
+```
+
+#### 1.4. Criar a aplicação
+
+Use a imagem oficial do Actual Budget:
+
+```bash
+fly launch --image actualbudget/actual-server:latest
+```
+
+Durante o processo, você pode definir o nome do app e a região de deploy.
+
+#### 1.5. Acessar e configurar
+
+Depois do deploy, abra a URL gerada no navegador.
+
+* Defina a senha de administrador.
+* Importe um orçamento existente ou crie um novo.
+
+#### 1.6. Atualizações futuras
+
+Quando sair uma nova versão do Actual Budget, basta rodar:
+
+```bash
+fly deploy --image actualbudget/actual-server:latest --app nome-do-app
+```
+
+#### 1.7. Economia de recursos (opcional)
+
+Para desligar a instância automaticamente quando não estiver em uso e religar sob demanda, adicione ao `fly.toml`:
+
+```toml
+[[services]]
+  auto_start_machines = true
+  auto_stop_machines = true
+```
+
+Isso ajuda a manter os custos abaixo do limite de U$5
+
+✅ Pronto! Agora você tem seu Actual Budget rodando no Fly.io com praticamente nenhum custo para uso pessoal.
+
 
 ### 2. Configurar o Google Cloud (Sheets + Drive)
 
